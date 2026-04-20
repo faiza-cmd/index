@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Moniwize Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{max-width:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif;background:#e8e8ed;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:0;-webkit-font-smoothing:antialiased}
+@media(min-width:600px){body{padding:24px 16px}}
+.app{background:#f5f5f7;border-radius:0;width:100%;max-width:960px;box-shadow:none;overflow-x:clip}
+@media(min-width:600px){.app{border-radius:16px;box-shadow:0 24px 64px rgba(0,0,0,0.14);overflow-x:clip}}
+
+/* TOPBAR */
+.topbar{background:rgba(255,255,255,0.93);padding:10px 12px;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(0,0,0,0.09);position:sticky;top:0;z-index:10;min-width:0}
+@media(min-width:600px){.topbar{padding:13px 24px;gap:14px}}
+.logo-mark{width:32px;height:32px;background:#1B3A6B;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-text{color:#000;font-weight:600;font-size:14px;letter-spacing:-0.4px}
+@media(min-width:600px){.logo-text{font-size:15px}}
+.view-toggle{margin-left:auto;background:#e8e8ed;border-radius:9px;display:flex;padding:2px;gap:2px;flex-shrink:0}
+.vt-btn{padding:5px 11px;font-size:11px;color:#111;cursor:pointer;border:none;background:transparent;transition:all .2s;border-radius:7px;font-family:inherit;font-weight:600}
+@media(min-width:600px){.vt-btn{padding:6px 16px;font-size:12px}}
+.vt-btn.active{background:#fff;color:#000;box-shadow:0 1px 4px rgba(0,0,0,0.13)}
+.badge-env{background:#f5f5f7;border:0.5px solid rgba(0,0,0,0.12);border-radius:20px;padding:4px 10px;font-size:10px;color:#333;font-weight:500;white-space:nowrap;flex-shrink:0}
+@media(max-width:440px){.badge-env{display:none}}
+@media(min-width:600px){.badge-env{padding:4px 12px;font-size:11px}}
+.avatar{width:28px;height:28px;background:#1B3A6B;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:600;flex-shrink:0;cursor:pointer}
+
+/* STEPPER */
+.stepper{background:rgba(255,255,255,0.55);padding:6px 8px;display:flex;gap:2px;align-items:center;border-bottom:0.5px solid rgba(0,0,0,0.07);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:pan-x}
+@media(max-width:520px){#wkrStepBar .stp-txt{display:none}#wkrStepBar .step{padding:5px 7px}}
+.stepper::-webkit-scrollbar{display:none}
+@media(min-width:600px){.stepper{padding:12px 24px;gap:4px}}
+.step{display:flex;align-items:center;gap:4px;padding:5px 7px;border-radius:20px;cursor:pointer;font-size:10px;color:#888;border:none;background:transparent;transition:all .2s;white-space:nowrap;font-family:inherit;font-weight:500;flex-shrink:0}
+@media(min-width:600px){.step{gap:7px;padding:7px 13px;font-size:12px}}
+.step.active{background:#1B3A6B;color:#fff}
+.step.done{color:#333}
+.step-num{width:15px;height:15px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;flex-shrink:0;opacity:.7}
+@media(min-width:600px){.step-num{width:18px;height:18px;font-size:9px}}
+.step.active .step-num{border-color:#fff;opacity:1}
+.step.done .step-num{border-color:#1B3A6B;background:#1B3A6B;color:#fff;opacity:1}
+.step-arr{color:#ddd;font-size:9px;flex-shrink:0;margin:0 1px}
+@media(max-width:600px){.step-arr{display:none}}
+.step{display:flex;align-items:center;gap:5px;padding:6px 9px;border-radius:20px;cursor:pointer;font-size:11px;color:#888;border:none;background:transparent;transition:all .2s;white-space:nowrap;font-family:inherit;font-weight:500;flex-shrink:0}
+@media(min-width:600px){.step{gap:7px;padding:7px 13px;font-size:12px}}
+.step:hover{color:#333;background:rgba(0,0,0,0.05)}
+.step.active{background:#1B3A6B;color:#fff}
+.step.done{color:#000}
+.step-num{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;flex-shrink:0;opacity:.7;transition:all .2s}
+@media(min-width:600px){.step-num{width:18px;height:18px;font-size:9px}}
+.step.active .step-num{border-color:#fff;opacity:1}
+.step.done .step-num{border-color:#1B3A6B;background:#1B3A6B;color:#fff;opacity:1}
+.step-arr{color:#ccc;font-size:10px;margin:0;flex-shrink:0}
+
+/* MAIN LAYOUT */
+.main{background:#f5f5f7;padding:12px;display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+@media(min-width:760px){.main{padding:20px 24px;gap:20px}}
+/* PANELS */
+.panel{background:#fff;border-radius:12px;border:0.5px solid rgba(0,0,0,0.08);padding:16px}
+@media(min-width:600px){.panel{padding:24px}}
+.sec-hdr{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:0.5px solid rgba(0,0,0,0.07);margin-bottom:20px}
+.sec-icon{width:34px;height:34px;background:#f5f5f7;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-title{font-size:16px;font-weight:600;color:#000;letter-spacing:-0.3px}
+.sec-sub{font-size:11px;color:#999;margin-top:2px}
+.kyb-badge{margin-left:auto;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.kyb-badge.progress{background:#fff7e6;color:#8a5c00}
+.kyb-badge.verified{background:#e8f5e8;color:#1a7a1a}
+.kyb-badge.neutral{background:#f0f0f0;color:#555}
+
+/* FORM */
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:759px){.field-row{grid-template-columns:1fr}}
+.field label{display:block;font-size:11px;color:#999;margin-bottom:5px;font-weight:500;letter-spacing:0.1px}
+.field input{width:100%;padding:9px 12px;border:0.5px solid rgba(0,0,0,0.15);border-radius:8px;font-size:13px;color:#000;background:#fff;outline:none;transition:all .2s;font-family:inherit}
+.field input:focus{border-color:#000;box-shadow:0 0 0 3px rgba(0,0,0,0.06)}
+
+/* DOCS */
+.docs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
+.doc-item{padding:10px 12px;border:0.5px solid rgba(0,0,0,0.1);border-radius:8px;font-size:11px;color:#555;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;background:#fafafa;user-select:none}
+.doc-item.done{background:#f0f9f0;border-color:rgba(0,120,80,0.2);color:#1a7a1a;cursor:default}
+.doc-item.pending:hover{border-color:rgba(0,0,0,0.3);background:#fff}
+.doc-item.uploading{background:#f8f8ff;color:#333;cursor:default}
+.doc-progress{position:absolute;bottom:0;left:0;height:2px;background:#1B3A6B;transition:width .35s ease}
+
+/* KYB NOTICE */
+.kyb-notice{border-radius:10px;padding:14px 16px;margin-top:14px;transition:all .4s}
+.kyb-notice.progress{background:#fffbf0;border:0.5px solid rgba(200,150,0,0.15)}
+.kyb-notice.verified{background:#f0f9f0;border:0.5px solid rgba(0,120,80,0.15)}
+.kyb-title{font-size:12px;font-weight:600;margin-bottom:3px;color:#000}
+.kyb-text{font-size:11px;color:#666;line-height:1.55}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn-outline{padding:9px 18px;border-radius:8px;border:0.5px solid rgba(0,0,0,0.2);background:#fff;font-size:12px;color:#333;cursor:pointer;transition:all .2s;font-family:inherit;font-weight:500}
+.btn-outline:hover{background:#f5f5f7;border-color:rgba(0,0,0,0.35)}
+.btn-primary{padding:9px 20px;border-radius:8px;border:none;background:#1B3A6B;font-size:12px;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s;font-family:inherit;font-weight:500;letter-spacing:-0.1px}
+.btn-primary:hover{background:#222}
+.btn-primary:active{transform:scale(0.98)}
+.btn-primary.full{width:100%;justify-content:center}
+
+/* WORKER TABLE */
+.worker-table{width:100%;border-collapse:collapse;font-size:12px}
+.worker-table th{text-align:left;padding:8px 10px;font-size:10px;color:#999;font-weight:600;border-bottom:0.5px solid rgba(0,0,0,0.08);letter-spacing:0.5px;text-transform:uppercase}
+.worker-table td{padding:9px 10px;border-bottom:0.5px solid rgba(0,0,0,0.05);color:#333;vertical-align:middle}
+.worker-table tr:hover td{background:#fafafa}
+.w-avatar{width:26px;height:26px;border-radius:50%;background:#f0f0f0;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#333;margin-right:8px;vertical-align:middle}
+.pill{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:500;display:inline-block}
+.pill.green{background:#e8f5e8;color:#1a7a1a}
+.pill.amber{background:#fff7e6;color:#8a5c00}
+.pill.blue{background:#e8f0ff;color:#1a3a8a}
+.add-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;border:0.5px dashed rgba(0,0,0,0.22);background:transparent;color:#666;font-size:12px;cursor:pointer;margin-top:12px;transition:all .2s;font-family:inherit;font-weight:500}
+.add-btn:hover{background:#f5f5f7;color:#000;border-color:rgba(0,0,0,0.4)}
+
+/* METRICS */
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:500px){.metric-grid{grid-template-columns:1fr 1fr}}
+.metric{background:#f5f5f7;border-radius:10px;padding:14px}
+.metric-label{font-size:10px;color:#999;margin-bottom:5px;font-weight:500;letter-spacing:0.1px}
+.metric-val{font-size:22px;font-weight:600;color:#000;letter-spacing:-0.5px}
+.metric-sub{font-size:10px;color:#1a7a1a;margin-top:3px;font-weight:500}
+
+/* CHARTS */
+.chart-section-label{font-size:10px;color:#999;font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:10px}
+.chart-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.chart-label{width:60px;color:#999;text-align:right;flex-shrink:0;font-size:10px;font-weight:500}
+.chart-bar-bg{flex:1;height:12px;background:#f0f0f0;border-radius:6px;overflow:hidden}
+.chart-bar{height:100%;background:#1B3A6B;border-radius:6px;width:0;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.chart-val{width:56px;color:#666;font-size:10px;font-weight:500;text-align:right}
+
+/* ESG */
+.esg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.esg-card{background:#f5f5f7;border-radius:10px;padding:14px}
+.esg-card-label{font-size:10px;font-weight:600;color:#999;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:8px}
+.esg-score{font-size:28px;font-weight:700;color:#000;letter-spacing:-1px;line-height:1}
+.esg-score span{font-size:13px;color:#999;font-weight:400;letter-spacing:0}
+.progress-bar{height:4px;background:#e0e0e0;border-radius:2px;margin:9px 0 5px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;background:#1B3A6B;width:0;transition:width .9s cubic-bezier(.4,0,.2,1)}
+.esg-sub{font-size:10px;color:#999}
+
+/* WORKER WALLET */
+.wallet-hero{background:#1B3A6B;border-radius:11px;padding:22px;margin-bottom:18px;color:#fff}
+.wallet-hero-label{font-size:10px;color:#aaa;font-weight:500;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:8px}
+.wallet-hero-amount{font-size:40px;font-weight:700;letter-spacing:-2px;margin-bottom:4px}
+.wallet-hero-sub{font-size:11px;color:#888}
+.pocket-section{background:#f5f5f7;border-radius:10px;padding:4px 0;margin-bottom:16px}
+.pocket-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(0,0,0,0.05)}
+.pocket-row:last-child{border-bottom:none}
+.pocket-label{font-size:12px;font-weight:500;color:#000}
+.pocket-sub{font-size:10px;color:#999;margin-top:2px}
+.pocket-right{display:flex;align-items:center;gap:12px}
+.pocket-val{font-size:13px;font-weight:600;color:#000}
+.pocket-val.muted{color:#bbb;font-weight:400}
+.toggle{width:40px;height:24px;border-radius:12px;background:#1B3A6B;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.off{background:#ddd}
+.toggle-knob{position:absolute;top:3px;right:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:all .22s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle.off .toggle-knob{right:auto;left:3px}
+.txn-section{background:#f5f5f7;border-radius:10px;overflow:hidden}
+.txn-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:0.5px solid rgba(0,0,0,0.05)}
+.txn-row:last-child{border-bottom:none}
+.txn-icon{width:34px;height:34px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:0.5px solid rgba(0,0,0,0.06)}
+.txn-info{flex:1}
+.txn-label{font-size:12px;font-weight:500;color:#000}
+.txn-sub{font-size:10px;color:#999;margin-top:2px}
+.txn-amount{text-align:right}
+.txn-amt{font-size:12px;font-weight:600;color:#000}
+.txn-amt.credit{color:#1a7a1a}
+.txn-date{font-size:10px;color:#999;margin-top:2px}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(0,0,0,0.88);color:#fff;padding:11px 22px;border-radius:22px;font-size:12px;font-weight:500;letter-spacing:-0.1px;opacity:0;transition:all .28s;pointer-events:none;white-space:nowrap;z-index:100}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* SECTION LABEL UTIL */
+.section-label{font-size:10px;font-weight:600;color:#999;letter-spacing:0.5px;text-transform:uppercase;margin:18px 0 10px}
+
+/* RESPONSIVE TWO-COL for worker panels */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:500px){.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo-mark">
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="2" width="6" height="6" rx="1.5" fill="white"/>
+        <rect x="10" y="2" width="6" height="6" rx="1.5" fill="white" opacity=".5"/>
+        <rect x="2" y="10" width="6" height="6" rx="1.5" fill="white" opacity=".5"/>
+        <rect x="10" y="10" width="6" height="6" rx="1.5" fill="white" opacity=".2"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">Moniwize</div>
+      <div class="logo-slogan">Smart Funds Management</div>
+    </div>
+    <div class="view-toggle">
+      <button class="vt-btn active" onclick="switchView('employer',this)">Employer</button>
+      <button class="vt-btn" onclick="switchView('worker',this)">Worker</button>
+    </div>
+    <div class="badge-env">UAE · WPS live</div>
+    <div class="avatar">AL</div>
+  </div>
+
+  <!-- STEPPER -->
+  <div class="stepper" id="stepperBar">
+    <div class="step active" id="step-1" onclick="goStep(1)"><div class="step-num">1</div>Onboarding</div>
+    <span class="step-arr">›</span>
+    <div class="step" id="step-2" onclick="goStep(2)"><div class="step-num">2</div>Workers</div>
+    <span class="step-arr">›</span>
+    <div class="step" id="step-3" onclick="goStep(3)"><div class="step-num">3</div>Payroll & WPS</div>
+    <span class="step-arr">›</span>
+    <div class="step" id="step-4" onclick="goStep(4)"><div class="step-num">4</div>Dashboard</div>
+    <span class="step-arr">›</span>
+    <div class="step" id="step-5" onclick="goStep(5)"><div class="step-num">5</div>ESG report</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div id="leftPanel">
+
+      <!-- S1: ONBOARDING -->
+      <div class="panel" id="s1">
+        <div class="sec-hdr">
+          <div class="sec-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="2" width="14" height="3" rx="1" fill="#000"/>
+              <rect x="2" y="7" width="10" height="1.5" rx=".75" fill="#ccc"/>
+              <rect x="2" y="10" width="12" height="1.5" rx=".75" fill="#ccc"/>
+              <rect x="2" y="13" width="8" height="1.5" rx=".75" fill="#ccc"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-title">Company onboarding</div>
+            <div class="sec-sub">Register your company and verify your account</div>
+          </div>
+          <div class="kyb-badge progress" id="kybBadge">KYB in progress</div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Business category</label><input value="Construction"/></div>
+          <div class="field"><label>Trade licence number</label><input value="DED-2004-18823-LLC"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Company name</label><input value="MENA Construction Co."/></div>
+          <div class="field"><label>Country of operation</label><input value="United Arab Emirates"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Street address</label><input value="Al Quoz Industrial Area 1, Sheikh Zayed Rd"/></div>
+          <div class="field"><label>Zip / PO Box</label><input value="PO Box 27941"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Primary contact</label><input value="Sarah Al Mansoori · VP Finance"/></div>
+          <div class="field"><label>Primary contact number</label><input value="+971 50 234 5678"/></div>
+        </div>
+        <div class="docs-grid" id="docsGrid">
+          <div class="doc-item done" id="doc-0"><span>📄</span> Trade licence · Uploaded ✓</div>
+          <div class="doc-item done" id="doc-1"><span>📄</span> Establishment card · Uploaded ✓</div>
+          <div class="doc-item done" id="doc-2"><span>📄</span> Signatory ID · Uploaded ✓</div>
+          <div class="doc-item pending" id="doc-3" onclick="uploadDoc(3)"><span>📄</span> VAT certificate · Upload →<div class="doc-progress" id="prog-3" style="width:0%"></div></div>
+        </div>
+        <div class="kyb-notice progress" id="kybNotice">
+          <div class="kyb-title" id="kybTitle">KYB verification underway</div>
+          <div class="kyb-text" id="kybText">MatchMove is reviewing your documents. Typically completes within 2 business hours.</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="toast('Draft saved')">Save draft</button>
+          <button class="btn-primary" onclick="goStep(2)">Continue to workers →</button>
+        </div>
+      </div>
+
+      <!-- S2: WORKERS -->
+      <div class="panel" id="s2" style="display:none">
+        <div class="sec-hdr">
+          <div class="sec-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+              <circle cx="9" cy="6" r="3.5" fill="#000"/>
+              <path d="M2 16c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-title">Worker registry</div>
+            <div class="sec-sub">Manage employees and their wallet status</div>
+          </div>
+          <div class="kyb-badge neutral" id="workerCount">247 active</div>
+        </div>
+        <table class="worker-table">
+          <thead><tr><th>Name</th><th>ID / Passport</th><th>Nationality</th><th>Position</th><th>Wallet</th><th>Smart Pockets</th></tr></thead>
+          <tbody id="workerTbody"></tbody>
+        </table>
+        <button class="add-btn" onclick="addWorker()">+ Add worker</button>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="goStep(1)">← Back</button>
+          <button class="btn-primary" onclick="goStep(3)">Continue to payroll →</button>
+        </div>
+      </div>
+
+      <!-- S3: PAYROLL -->
+      <div class="panel" id="s3" style="display:none">
+        <div class="sec-hdr">
+          <div class="sec-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="4" width="14" height="10" rx="2" stroke="#000" stroke-width="1.5" fill="none"/>
+              <path d="M2 8h14" stroke="#000" stroke-width="1.2"/>
+              <circle cx="6" cy="12" r="1" fill="#000"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-title">Payroll & WPS</div>
+            <div class="sec-sub">Submit salaries and generate WPS SIF file</div>
+          </div>
+          <div class="kyb-badge verified">WPS ready</div>
+        </div>
+        <div class="metric-grid">
+          <div class="metric"><div class="metric-label">Total payroll</div><div class="metric-val">AED 1.24M</div><div class="metric-sub">↑ 3.2% vs last cycle</div></div>
+          <div class="metric"><div class="metric-label">Workers paid</div><div class="metric-val">247</div><div class="metric-sub">0 pending</div></div>
+          <div class="metric"><div class="metric-label">WPS status</div><div class="metric-val" style="font-size:14px;padding-top:5px"><span class="pill green">Compliant</span></div><div class="metric-sub">MOL verified</div></div>
+        </div>
+        <div class="chart-section-label">Payroll by department</div>
+        <div id="payrollChart"></div>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="goStep(2)">← Back</button>
+          <button class="btn-primary" onclick="runPayroll()">Run payroll cycle →</button>
+        </div>
+      </div>
+
+      <!-- S4: DASHBOARD -->
+      <div class="panel" id="s4" style="display:none">
+        <div class="sec-hdr">
+          <div class="sec-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="2" width="6" height="6" rx="1.5" fill="#000"/>
+              <rect x="10" y="2" width="6" height="3" rx="1" fill="#000" opacity=".4"/>
+              <rect x="2" y="10" width="14" height="6" rx="1.5" fill="#000" opacity=".15"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-title">Live dashboard</div>
+            <div class="sec-sub">Real-time platform activity and remittance flow</div>
+          </div>
+        </div>
+        <div class="metric-grid">
+          <div class="metric"><div class="metric-label">Remittances this month</div><div class="metric-val">AED 892K</div><div class="metric-sub">↑ 7.4% MoM</div></div>
+          <div class="metric"><div class="metric-label">Avg transfer time</div><div class="metric-val">4.2h</div><div class="metric-sub">SLA: 24h</div></div>
+          <div class="metric"><div class="metric-label">Smart Pockets active</div><div class="metric-val">183</div><div class="metric-sub">74% adoption</div></div>
+        </div>
+        <div class="chart-section-label">Monthly remittance volume (AED '000)</div>
+        <div id="dashChart"></div>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="goStep(3)">← Back</button>
+          <button class="btn-primary" onclick="goStep(5)">View ESG report →</button>
+        </div>
+      </div>
+
+      <!-- S5: ESG -->
+      <div class="panel" id="s5" style="display:none">
+        <div class="sec-hdr">
+          <div class="sec-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+              <path d="M9 2C5.134 2 2 5.134 2 9s3.134 7 7 7 7-3.134 7-7" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M12 2a5 5 0 0 1 4 4" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-title">ESG report</div>
+            <div class="sec-sub">Financial inclusion & worker welfare metrics</div>
+          </div>
+          <div class="kyb-badge verified">Q1 2026</div>
+        </div>
+        <div class="esg-grid">
+          <div class="esg-card">
+            <div class="esg-card-label">Financial inclusion</div>
+            <div class="esg-score">84<span>/100</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="esg1" style="width:0%"></div></div>
+            <div class="esg-sub">↑ 12pts vs Q4 2025</div>
+          </div>
+          <div class="esg-card">
+            <div class="esg-card-label">Remittance savings</div>
+            <div class="esg-score">AED 41K</div>
+            <div class="progress-bar"><div class="progress-fill" id="esg2" style="width:0%"></div></div>
+            <div class="esg-sub">68% fee reduction avg</div>
+          </div>
+          <div class="esg-card">
+            <div class="esg-card-label">Worker safety</div>
+            <div class="esg-score">183</div>
+            <div class="progress-bar"><div class="progress-fill" id="esg3" style="width:0%"></div></div>
+            <div class="esg-sub">74% with Smart Pockets</div>
+          </div>
+          <div class="esg-card">
+            <div class="esg-card-label">WPS compliance</div>
+            <div class="esg-score">100<span>%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="esg4" style="width:0%"></div></div>
+            <div class="esg-sub">12 consecutive months</div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="goStep(4)">← Back</button>
+          <button class="btn-primary" onclick="toast('ESG report exported as PDF')">Export report →</button>
+        </div>
+      </div>
+
+      <!-- WORKER VIEW PANEL -->
+      <div id="workerPanel" style="display:none">
+        <div id="wkrStepBar" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:12px;background:#fff;border-bottom:1px solid rgba(0,0,0,0.07)">
+          <div class="step active" id="ws-0" onclick="goWkrStep(0)" style="border-radius:9px;justify-content:center"><div class="step-num">1</div>Activation</div>
+          <div class="step" id="ws-1" onclick="goWkrStep(1)" style="border-radius:9px;justify-content:center"><div class="step-num">2</div>Balance</div>
+          <div class="step" id="ws-2" onclick="goWkrStep(2)" style="border-radius:9px;justify-content:center"><div class="step-num">3</div>Pockets</div>
+          <div class="step" id="ws-3" onclick="goWkrStep(3)" style="border-radius:9px;justify-content:center"><div class="step-num">4</div>Send home</div>
+          <div class="step" id="ws-4" onclick="goWkrStep(4)" style="border-radius:9px;justify-content:center"><div class="step-num">5</div>History</div>
+          <div class="step" id="ws-5" onclick="goWkrStep(5)" style="border-radius:9px;justify-content:center"><div class="step-num">6</div>Settings</div>
+        </div>
+        <div class="panel" id="wkrContent"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+var currentStep = 1;
+var kybVerified = false;
+var docsState = [true, true, true, false];
+var uploadingDoc = false;
+var isWorkerView = false;
+
+var workers = [
+  {name:'Ana Reyes', id:'P9231842', nat:'🇵🇭 Filipino', wallet:'Active', pockets:true, pos:'Field Worker'},
+  {name:'Raj Kumar', id:'P7712341', nat:'🇮🇳 Indian', wallet:'Active', pockets:false, pos:'Machine Operator'},
+  {name:'Maria Santos', id:'P8831120', nat:'🇵🇭 Filipino', wallet:'Pending', pockets:false, pos:'Site Supervisor'},
+  {name:'Bong Dela Cruz', id:'P6619922', nat:'🇵🇭 Filipino', wallet:'Active', pockets:true, pos:'Heavy Equipment Operator'},
+];
+
+var payrollDepts = [
+  {label:'Civil', val:410, max:500},
+  {label:'MEP', val:320, max:500},
+  {label:'Finishing', val:280, max:500},
+  {label:'Safety', val:140, max:500},
+  {label:'Admin', val:90, max:500},
+];
+
+var dashMonths = [
+  {label:'Nov', val:620},
+  {label:'Dec', val:710},
+  {label:'Jan', val:780},
+  {label:'Feb', val:840},
+  {label:'Mar', val:892},
+];
+
+function toast(msg) {
+  var el = document.getElementById('toastEl');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+
+// Worker step data
+var wkrStep = 0;
+var wkrSteps = ['Activation','Salary arrives','Smart pockets','Send home','History & card','Settings'];
+var pocketData = [
+  {name:'Family transfer', amt:952, color:'#000'},
+  {name:'Savings', amt:308, color:'#444'},
+  {name:'Food & living', amt:420, color:'#666'},
+  {name:'Medical', amt:168, color:'#888'},
+];
+
+function switchView(v, btn) {
+  isWorkerView = (v === 'worker');
+  document.querySelectorAll('.vt-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  var stepper = document.getElementById('stepperBar');
+  var workerPanel = document.getElementById('workerPanel');
+  var empIds = ['s1','s2','s3','s4','s5'];
+  if (isWorkerView) {
+    stepper.style.display = 'none';
+    workerPanel.style.display = 'block';
+    empIds.forEach(function(id){ document.getElementById(id).style.display = 'none'; });
+    renderWkrStep(wkrStep);
+  } else {
+    stepper.style.display = 'flex';
+    workerPanel.style.display = 'none';
+    showStep(currentStep);
+  }
+  updatePhone();
+}
+
+function goWkrStep(n) {
+  wkrStep = n;
+  renderWkrStep(n);
+  updatePhone();
+}
+
+function renderWkrStepBar() {
+  for (var i = 0; i <= 5; i++) {
+    var el = document.getElementById('ws-' + i);
+    if (!el) continue;
+    el.className = 'step' + (i < wkrStep ? ' done' : i === wkrStep ? ' active' : '');
+    el.querySelector('.step-num').textContent = i < wkrStep ? '✓' : (i + 1);
+  }
+}
+
+function renderWkrStep(s) {
+  renderWkrStepBar();
+  var el = document.getElementById('wkrContent');
+  if (s === 0) renderWkrOnboard(el);
+  else if (s === 1) renderWkrSalary(el);
+  else if (s === 2) renderWkrPockets(el);
+  else if (s === 3) renderWkrRemit(el);
+  else if (s === 4) renderWkrHistory(el);
+  else if (s === 5) renderWkrSettings(el);
+}
+
+function renderWkrOnboard(el) {
+  el.innerHTML = '<div class="sec-hdr" style="margin-bottom:16px"><div class="sec-icon">🪪</div><div><div class="sec-title">Maria activates her wallet</div><div class="sec-sub">KYC verification · Philippine ID · Under 3 minutes</div></div><span class="kyb-badge verified">Wallet activating</span></div><div class="two-col"><div style="background:#f5f5f7;border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:600;color:#000;margin-bottom:10px">What Maria needs</div><div style="display:flex;flex-direction:column;gap:9px"><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:7px;background:#e8f5e8;display:flex;align-items:center;justify-content:center;font-size:14px">🪪</div><div><div style="font-size:12px;font-weight:500;color:#000">Philippine ID / Passport</div><div style="font-size:10px;color:#999">Scanned automatically</div></div></div><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:7px;background:#e8f0ff;display:flex;align-items:center;justify-content:center;font-size:14px">📱</div><div><div style="font-size:12px;font-weight:500;color:#000">Phone number</div><div style="font-size:10px;color:#999">OTP confirmation</div></div></div><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:7px;background:#fff7e6;display:flex;align-items:center;justify-content:center;font-size:14px">🤳</div><div><div style="font-size:12px;font-weight:500;color:#000">Selfie</div><div style="font-size:10px;color:#999">Liveness check via Onfido</div></div></div></div></div><div style="background:#f5f5f7;border-radius:10px;padding:14px"><div style="font-size:12px;font-weight:600;color:#000;margin-bottom:10px">What she gets</div><div style="display:flex;flex-direction:column;gap:9px"><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:7px;background:#e8f5e8;display:flex;align-items:center;justify-content:center;font-size:14px">👛</div><div><div style="font-size:12px;font-weight:500;color:#000">Digital wallet</div><div style="font-size:10px;color:#999">No bank account needed</div></div></div><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:7px;background:#e8f0ff;display:flex;align-items:center;justify-content:center;font-size:14px">💳</div><div><div style="font-size:12px;font-weight:500;color:#000">Mastercard</div><div style="font-size:10px;color:#999">Spend anywhere, instantly</div></div></div><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:7px;background:#e8f5e8;display:flex;align-items:center;justify-content:center;font-size:14px">💸</div><div><div style="font-size:12px;font-weight:500;color:#000">Remittance</div><div style="font-size:10px;color:#999">Send home at 1.5% FX</div></div></div></div></div></div><div style="background:#f0f9f0;border-radius:10px;padding:11px 14px;font-size:11px;color:#1a7a1a;line-height:1.6;margin-bottom:16px">No bank account · no salary minimum · no credit history. Available in Tagalog, Bahasa, Bengali, Hindi and English. Wallet live in under 3 minutes.</div><div class="btn-row"><button class="btn-outline" onclick="goEmployer()">← Back to employer</button><button class="btn-primary" onclick="goWkrStep(1)">Continue →</button></div>';
+}
+
+function renderWkrSalary(el) {
+  el.innerHTML = '<div class="sec-hdr" style="margin-bottom:16px"><div class="sec-icon">💰</div><div><div class="sec-title">Salary arrives</div><div class="sec-sub">AED 2,800 from ALEC Engineering · May 1, 2026</div></div><span class="kyb-badge verified">Received</span></div><div style="background:#1B3A6B;border-radius:11px;padding:20px;color:#fff;margin-bottom:16px"><div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px">Total balance</div><div style="font-size:36px;font-weight:700;letter-spacing:-1.5px;margin-bottom:4px">AED 2,800</div><div style="font-size:11px;color:#888">Received today · Not yet allocated · May 1, 2026</div></div><div style="font-size:12px;font-weight:600;color:#000;margin-bottom:10px">Maria can now choose what to do with her salary:</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px"><div style="background:#f5f5f7;border-radius:10px;padding:14px;text-align:center;cursor:pointer;border:0.5px solid rgba(0,0,0,0.08)" onclick="goWkrStep(2)"><div style="font-size:22px;margin-bottom:6px">📦</div><div style="font-size:12px;font-weight:600;color:#000">Set up pockets</div><div style="font-size:10px;color:#999;margin-top:3px">Split salary her way</div></div><div style="background:#f5f5f7;border-radius:10px;padding:14px;text-align:center;cursor:pointer;border:0.5px solid rgba(0,0,0,0.08)" onclick="goWkrStep(3)"><div style="font-size:22px;margin-bottom:6px">💸</div><div style="font-size:12px;font-weight:600;color:#000">Send home</div><div style="font-size:10px;color:#999;margin-top:3px">Transfer to Philippines</div></div><div style="background:#f5f5f7;border-radius:10px;padding:14px;text-align:center;cursor:pointer;border:0.5px solid rgba(0,0,0,0.08)" onclick="goWkrStep(4)"><div style="font-size:22px;margin-bottom:6px">💳</div><div style="font-size:12px;font-weight:600;color:#000">Use my card</div><div style="font-size:10px;color:#999;margin-top:3px">Mastercard · anywhere</div></div></div><div style="background:#f5f5f7;border-radius:10px;padding:11px 14px;font-size:11px;color:#666;line-height:1.6;margin-bottom:14px">Maria is fully in control. The employer does not pre-allocate her salary — she decides how to split it, when to send, and how much to spend.</div><div class="btn-row"><button class="btn-outline" onclick="goWkrStep(0)">← Back</button><button class="btn-primary" onclick="goWkrStep(2)">Set up pockets →</button></div>';
+}
+
+function renderWkrPockets(el) {
+  el.innerHTML = '<div class="sec-hdr" style="margin-bottom:16px"><div class="sec-icon">📦</div><div><div class="sec-title">Smart Pockets</div><div class="sec-sub">Maria decides her own allocation · Salary: AED 2,800</div></div></div><div style="font-size:11px;color:#999;margin-bottom:12px">Type an amount or drag the bar to adjust. Total must stay within AED 2,800.</div><div id="pockets-content"></div><div style="display:flex;justify-content:space-between;padding:9px 13px;background:#f5f5f7;border-radius:10px;margin:10px 0" id="pocket-total-row"><span style="font-size:11px;color:#999">Allocated</span><span style="font-size:12px;font-weight:600;color:#1a7a1a" id="pocket-total-val">AED 0 of 2,800</span></div><div class="btn-row"><button class="btn-outline" onclick="goWkrStep(1)">← Back</button><button class="btn-primary" onclick="goWkrStep(3)">Confirm & send home →</button></div>';
+  renderPocketSliders();
+}
+
+function renderPocketSliders() {
+  var el = document.getElementById('pockets-content');
+  if (!el) return;
+  var html = '';
+  pocketData.forEach(function(p,i){
+    var barW = Math.min(100, Math.round(p.amt/2800*100));
+    var pct = Math.round(p.amt/2800*100);
+    html += '<div style="background:#f5f5f7;border-radius:10px;padding:11px 13px;margin-bottom:7px">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">';
+    html += '<div style="font-size:12px;font-weight:600;color:#000;flex:1">'+p.name+'</div>';
+    html += '<input type="number" value="'+p.amt+'" min="0" max="2800" step="10" style="width:68px;padding:5px 6px;border:0.5px solid rgba(0,0,0,0.18);border-radius:7px;font-size:13px;font-weight:600;color:#000;font-family:inherit;text-align:right;background:#fff;outline:none;flex-shrink:0" oninput="onPocketInput('+i+',this.value)" onblur="onPocketBlur('+i+',this.value)">';
+    html += '<div style="font-size:10px;color:#999;min-width:30px;text-align:right">'+pct+'%</div>';
+    html += '</div>';
+    html += '<div style="height:7px;background:#e0e0e0;border-radius:4px;cursor:pointer" onclick="adjPocket('+i+',event)">';
+    html += '<div style="height:100%;width:'+barW+'%;background:'+p.color+';border-radius:4px;pointer-events:none;transition:width .1s"></div>';
+    html += '</div></div>';
+  });
+  el.innerHTML = html;
+  updatePocketTotal();
+}
+
+function updatePocketTotal() {
+  var total = pocketData.reduce(function(a,b){return a+b.amt;},0);
+  var el = document.getElementById('pocket-total-val');
+  if (!el) return;
+  var ok = total <= 2800;
+  el.textContent = 'AED '+total.toLocaleString()+' of 2,800 ('+Math.round(total/2800*100)+'%)';
+  el.style.color = ok ? '#1a7a1a' : '#c00';
+}
+
+function onPocketInput(i, val) {
+  var v = Math.max(0, Math.min(2800, parseInt(val)||0));
+  pocketData[i].amt = v;
+  var fills = document.querySelectorAll('#pockets-content [style*="border-radius:4px;pointer-events:none"]');
+  var pcts = document.querySelectorAll('#pockets-content [style*="min-width:30px"]');
+  if (fills[i]) fills[i].style.width = Math.min(100, Math.round(v/2800*100))+'%';
+  if (pcts[i]) pcts[i].textContent = Math.round(v/2800*100)+'%';
+  updatePocketTotal();
+}
+
+function onPocketBlur(i, val) {
+  var v = Math.max(0, Math.min(2800, parseInt(val)||0));
+  pocketData[i].amt = v;
+  renderPocketSliders();
+}
+
+function adjPocket(i, e) {
+  var rect = e.currentTarget.getBoundingClientRect();
+  var amt = Math.round(Math.max(0, Math.min(2800, (e.clientX-rect.left)/rect.width*2800))/10)*10;
+  pocketData[i].amt = amt;
+  renderPocketSliders();
+}
+
+function renderWkrRemit(el) {
+  el.innerHTML = '<div class="sec-hdr" style="margin-bottom:16px"><div class="sec-icon" style="font-size:20px">🇵🇭</div><div><div class="sec-title">Send money home</div><div class="sec-sub">AED → PHP · BPI Philippines · under 2 hours</div></div></div><div class="two-col"><div style="background:#f5f5f7;border-radius:10px;padding:14px"><div style="font-size:11px;color:#999;margin-bottom:9px">Transfer details</div><div style="display:flex;flex-direction:column;gap:0"><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">From pocket</span><span style="font-weight:600">Family transfer</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">Sending</span><span style="font-weight:600">AED 952</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">FX rate</span><span style="font-weight:600">1 AED = 16.42 PHP</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">FX charge</span><span style="font-weight:600">1.5%</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">Flat fee</span><span style="font-weight:600">$1.25</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">Recipient</span><span style="font-weight:600">Luz Santos · BPI</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px"><span style="font-weight:600">Family receives</span><span style="font-weight:700;font-size:16px">PHP 15,617</span></div></div></div><div style="display:flex;flex-direction:column;gap:9px"><div style="background:#f0f9f0;border-radius:10px;padding:13px"><div style="font-size:12px;font-weight:600;color:#1a7a1a;margin-bottom:7px">Moniwize vs Al Ansari</div><div style="font-size:11px;color:#1a7a1a;display:flex;justify-content:space-between;padding:3px 0;border-bottom:0.5px solid rgba(26,122,26,0.15)"><span>Moniwize rate</span><span style="font-weight:600">1.5% + $1.25</span></div><div style="font-size:11px;color:#1a7a1a;display:flex;justify-content:space-between;padding:3px 0;border-bottom:0.5px solid rgba(26,122,26,0.15)"><span>Al Ansari rate</span><span style="font-weight:600">~6.5%</span></div><div style="font-size:12px;color:#1a7a1a;display:flex;justify-content:space-between;padding:6px 0"><span style="font-weight:600">Maria saves</span><span style="font-weight:700">AED 118</span></div><div style="font-size:10px;color:#1a7a1a">≈ AED 1,416/year saved</div></div><div style="background:#f5f5f7;border-radius:10px;padding:12px"><div style="font-size:11px;color:#999;margin-bottom:3px">Delivery estimate</div><div style="font-size:13px;font-weight:600;color:#000">Within 2 hours</div><div style="font-size:10px;color:#999;margin-top:3px">Luz Santos notified on receipt</div></div></div></div><div class="btn-row"><button class="btn-outline" onclick="goWkrStep(2)">← Adjust pockets</button><button class="btn-primary" onclick="confirmTransfer()">Confirm transfer →</button></div>';
+}
+
+function renderWkrHistory(el) {
+  el.innerHTML = '<div class="sec-hdr" style="margin-bottom:16px"><div class="sec-icon">💳</div><div><div class="sec-title">Card & transaction history</div><div class="sec-sub">Maria Santos · Moniwize Mastercard</div></div></div><div style="background:#000;border-radius:11px;padding:16px;margin-bottom:14px"><div style="width:14px;height:10px;background:#FFD700;border-radius:2px;margin-bottom:8px"></div><div style="font-size:11px;color:rgba(255,255,255,.55);letter-spacing:2px;font-family:monospace">•••• •••• •••• 4821</div><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:9px"><div><div style="font-size:9px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px">Maria Santos</div><div style="font-size:9px;color:rgba(255,255,255,.4)">Exp 04/29</div></div><svg width="32" height="20" viewBox="0 0 38 24"><circle cx="15" cy="12" r="10" fill="#EB001B" opacity=".9"/><circle cx="23" cy="12" r="10" fill="#F79E1B" opacity=".9"/></svg></div></div><table class="worker-table"><thead><tr><th>Transaction</th><th>Date</th><th>Amount</th></tr></thead><tbody><tr><td><div style="display:flex;align-items:center;gap:7px"><div style="width:22px;height:22px;border-radius:5px;background:#e8f5e8;display:flex;align-items:center;justify-content:center;font-size:11px">💰</div>Salary — ALEC Engineering</div></td><td style="color:#999;font-size:11px">May 1</td><td style="color:#1a7a1a;font-weight:600">+AED 2,800</td></tr><tr><td><div style="display:flex;align-items:center;gap:7px"><div style="width:22px;height:22px;border-radius:5px;background:#e8f0ff;display:flex;align-items:center;justify-content:center;font-size:11px">💸</div>Remittance → Luz Santos</div></td><td style="color:#999;font-size:11px">May 1</td><td style="color:#c00;font-weight:600">−AED 952</td></tr><tr><td><div style="display:flex;align-items:center;gap:7px"><div style="width:22px;height:22px;border-radius:5px;background:#fff7e6;display:flex;align-items:center;justify-content:center;font-size:11px">🛒</div>Carrefour Al Barsha · Card</div></td><td style="color:#999;font-size:11px">May 3</td><td style="color:#c00;font-weight:600">−AED 112</td></tr><tr><td><div style="display:flex;align-items:center;gap:7px"><div style="width:22px;height:22px;border-radius:5px;background:#f0eeff;display:flex;align-items:center;justify-content:center;font-size:11px">🍔</div>Jollibee Deira · Card</div></td><td style="color:#999;font-size:11px">May 5</td><td style="color:#c00;font-weight:600">−AED 38</td></tr><tr><td><div style="display:flex;align-items:center;gap:7px"><div style="width:22px;height:22px;border-radius:5px;background:#e8f0ff;display:flex;align-items:center;justify-content:center;font-size:11px">💸</div>Remittance → Luz Santos</div></td><td style="color:#999;font-size:11px">May 15</td><td style="color:#c00;font-weight:600">−AED 396</td></tr></tbody></table><div class="btn-row" style="margin-top:16px"><button class="btn-outline" onclick="goEmployer()">Switch to employer</button><button class="btn-primary" onclick="goWkrStep(5)">Settings →</button></div>';
+}
+
+function showStep(n) {
+  ['s1','s2','s3','s4','s5'].forEach(function(id, i){
+    document.getElementById(id).style.display = (i === n - 1) ? 'block' : 'none';
+  });
+}
+
+function goStep(n) {
+  currentStep = n;
+  for (var i = 1; i <= 5; i++) {
+    var el = document.getElementById('step-' + i);
+    el.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
+    el.querySelector('.step-num').textContent = i < n ? '✓' : i;
+  }
+  showStep(n);
+  if (n === 2) renderWorkers();
+  if (n === 3) { renderChart('payrollChart', payrollDepts, function(d){ return 'AED ' + d.val + 'K'; }, function(d){ return Math.round(d.val / d.max * 100); }); }
+  if (n === 4) { var mx = Math.max.apply(null, dashMonths.map(function(m){ return m.val; })); renderChart('dashChart', dashMonths, function(d){ return d.val + 'K'; }, function(d){ return Math.round(d.val / mx * 100); }); }
+  if (n === 5) { setTimeout(function(){ ['esg1','esg2','esg3','esg4'].forEach(function(id, i){ document.getElementById(id).style.width = [84,68,74,100][i] + '%'; }); }, 80); }
+  updatePhone();
+}
+
+function renderWorkers() {
+  var tb = document.getElementById('workerTbody');
+  tb.innerHTML = workers.map(function(w){
+    var init = w.name.split(' ').map(function(x){ return x[0]; }).join('');
+    var ws = w.wallet === 'Active' ? 'pill green' : 'pill amber';
+    var ps = w.pockets ? '<span class="pill blue">Active</span>' : '<span style="color:#ccc;font-size:11px">—</span>';
+    return '<tr><td><span class="w-avatar">' + init + '</span>' + w.name + '</td><td style="color:#999;font-size:11px">' + w.id + '</td><td>' + w.nat + '</td><td style="font-size:11px;color:#333">' + (w.pos||'—') + '</td><td><span class="' + ws + '">' + w.wallet + '</span></td><td>' + ps + '</td></tr>';
+  }).join('');
+  document.getElementById('workerCount').textContent = workers.length + ' workers';
+}
+
+function addWorker() {
+  var names = ['Jose Reyes','Linda Cruz','Ramon Santos','Grace Tan'];
+  var positions = ['Field Worker','Scaffolder','Welder','Safety Officer'];
+  var name = names[workers.length % names.length];
+  var pos = positions[workers.length % positions.length];
+  workers.push({ name:name, id:'P' + Math.floor(Math.random()*9000000+1000000), nat:'🇵🇭 Filipino', wallet:'Pending', pockets:false, pos:pos });
+  renderWorkers();
+  toast('Worker added — complete their profile');
+}
+
+function renderChart(containerId, data, valFn, pctFn) {
+  var el = document.getElementById(containerId);
+  el.innerHTML = data.map(function(d){
+    return '<div class="chart-row"><div class="chart-label">' + d.label + '</div><div class="chart-bar-bg"><div class="chart-bar" style="width:0%" data-pct="' + pctFn(d) + '"></div></div><div class="chart-val">' + valFn(d) + '</div></div>';
+  }).join('');
+  setTimeout(function(){
+    el.querySelectorAll('.chart-bar').forEach(function(bar){
+      bar.style.width = bar.getAttribute('data-pct') + '%';
+    });
+  }, 80);
+}
+
+function uploadDoc(idx) {
+  if (docsState[idx] || uploadingDoc) return;
+  uploadingDoc = true;
+  var doc = document.getElementById('doc-' + idx);
+  var prog = document.getElementById('prog-' + idx);
+  doc.classList.remove('pending');
+  doc.classList.add('uploading');
+  doc.childNodes[0].textContent = '';
+  doc.childNodes[1] && (doc.childNodes[1].textContent = '');
+  doc.innerHTML = '<span>📤</span> Uploading...<div class="doc-progress" id="prog-' + idx + '" style="width:0%"></div>';
+  prog = document.getElementById('prog-' + idx);
+  var w = 0;
+  var iv = setInterval(function(){
+    w += 11;
+    if (prog) prog.style.width = Math.min(w, 100) + '%';
+    if (w >= 100) {
+      clearInterval(iv);
+      docsState[idx] = true;
+      uploadingDoc = false;
+      doc.className = 'doc-item done';
+      doc.innerHTML = '<span>📄</span> VAT certificate · Uploaded ✓';
+      checkAllDocs();
+    }
+  }, 110);
+}
+
+function checkAllDocs() {
+  if (docsState.every(Boolean) && !kybVerified) {
+    setTimeout(function(){
+      kybVerified = true;
+      document.getElementById('kybBadge').textContent = 'KYB verified';
+      document.getElementById('kybBadge').className = 'kyb-badge verified';
+      document.getElementById('kybNotice').className = 'kyb-notice verified';
+      document.getElementById('kybTitle').textContent = 'KYB verification complete';
+      document.getElementById('kybText').textContent = 'All documents verified by MatchMove. Your account is now fully active.';
+      updatePhone();
+      toast('KYB verified — account is now active ✓');
+    }, 700);
+  }
+}
+
+function toggleSwitch(el) {
+  el.classList.toggle('off');
+  toast(el.classList.contains('off') ? 'Smart Pocket paused' : 'Smart Pocket activated');
+}
+
+function runPayroll() {
+  toast('Payroll cycle initiated — generating WPS SIF...');
+  setTimeout(function(){ toast('WPS SIF file submitted to MOL ✓'); }, 2600);
+}
+
+function updatePhone() {}
+
+
+function goEmployer() {
+  isWorkerView = false;
+  document.querySelectorAll('.vt-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelector('.vt-btn').classList.add('active');
+  document.getElementById('stepperBar').style.display = 'flex';
+  document.getElementById('workerPanel').style.display = 'none';
+  showStep(currentStep);
+  updatePhone();
+}
+
+function confirmTransfer() {
+  toast('Transfer sent! PHP 15,617 sent to Luz Santos · BPI');
+  goWkrStep(4);
+}
+
+
+var settingsTab = 0;
+function renderWkrSettings(el) {
+  var tabs = ['Bank account','Card','Reports'];
+  var tabHtml = '<div style="display:flex;gap:6px;margin-bottom:18px;background:#f5f5f7;padding:4px;border-radius:10px">';
+  tabs.forEach(function(t,i){
+    var active = i===settingsTab;
+    tabHtml += '<button onclick="settingsTab='+i+';renderWkrSettings(document.getElementById(\'wkrContent\'))" style="flex:1;padding:8px 0;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;background:'+(active?'#fff':'transparent')+';color:'+(active?'#000':'#999')+';box-shadow:'+(active?'0 1px 4px rgba(0,0,0,0.12)':'none')+'">'+t+'</button>';
+  });
+  tabHtml += '</div>';
+
+  var content = '';
+  if (settingsTab === 0) {
+    content = '<div class="sec-hdr" style="margin-bottom:16px"><div class="sec-icon">🏦</div><div><div class="sec-title">Bank account</div><div class="sec-sub">Link your Philippine bank for remittances</div></div></div>'
+    +'<div style="background:#f5f5f7;border-radius:10px;padding:16px;margin-bottom:12px">'
+    +'<div style="font-size:11px;color:#999;margin-bottom:14px;font-weight:500">Linked bank account</div>'
+    +'<div class="field" style="margin-bottom:10px"><label>Account holder name</label><input value="Luz Santos"/></div>'
+    +'<div class="field-row">'
+    +'<div class="field"><label>Bank name</label><input value="Bank of the Philippine Islands (BPI)"/></div>'
+    +'<div class="field"><label>Account number</label><input value="•••• •••• 4821"/></div>'
+    +'</div>'
+    +'<div class="field-row">'
+    +'<div class="field"><label>Branch</label><input value="Taguig City Branch"/></div>'
+    +'<div class="field"><label>SWIFT / BIC</label><input value="BOPIPHMM"/></div>'
+    +'</div>'
+    +'</div>'
+    +'<div style="background:#f0f9f0;border-radius:10px;padding:11px 14px;font-size:11px;color:#1a7a1a;margin-bottom:16px">✓ Bank account verified · Transfers arrive within 2 hours</div>'
+    +'<div class="btn-row"><button class="btn-outline" onclick="goWkrStep(4)">← Back</button><button class="btn-primary" onclick="toast(\'Bank account updated\')">Save changes</button></div>';
+  } else if (settingsTab === 1) {
+    content = '<div class="sec-hdr" style="margin-bottom:16px"><div class="sec-icon">💳</div><div><div class="sec-title">My card</div><div class="sec-sub">Moniwize Mastercard · Maria Santos</div></div></div>'
+    +'<div style="background:#000;border-radius:14px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden">'
+    +'<div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.04)"></div>'
+    +'<div style="position:absolute;bottom:-30px;right:20px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.03)"></div>'
+    +'<div style="width:36px;height:24px;background:linear-gradient(135deg,#FFD700,#FFA500);border-radius:4px;margin-bottom:20px"></div>'
+    +'<div style="font-size:15px;color:rgba(255,255,255,.9);letter-spacing:3px;font-family:monospace;margin-bottom:16px">4821 •••• •••• 7743</div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-end">'
+    +'<div><div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Card holder</div>'
+    +'<div style="font-size:13px;color:#fff;font-weight:600;letter-spacing:0.5px">MARIA SANTOS</div></div>'
+    +'<div style="text-align:right"><div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Expires</div>'
+    +'<div style="font-size:12px;color:#fff;font-weight:500">04 / 29</div></div>'
+    +'<svg width="44" height="28" viewBox="0 0 44 28"><circle cx="16" cy="14" r="12" fill="#EB001B" opacity=".9"/><circle cx="28" cy="14" r="12" fill="#F79E1B" opacity=".9"/></svg>'
+    +'</div></div>'
+    +'<div style="background:#f5f5f7;border-radius:10px;overflow:hidden;margin-bottom:16px">'
+    +'<div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">Card number</span><span style="font-weight:600;font-family:monospace">•••• •••• •••• 7743</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">Expiry date</span><span style="font-weight:600">04 / 2029</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">CVV</span><span style="font-weight:600">•••</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(0,0,0,0.06);font-size:12px"><span style="color:#999">Card holder</span><span style="font-weight:600">Maria Santos</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:12px 16px;font-size:12px"><span style="color:#999">Status</span><span class="pill green">Active</span></div>'
+    +'</div>'
+    +'<div class="btn-row"><button class="btn-outline" onclick="goWkrStep(4)">← Back</button><button class="btn-primary" onclick="toast(\'Card details copied\')">Copy card number</button></div>';
+  } else {
+    content = '<div class="sec-hdr" style="margin-bottom:16px"><div class="sec-icon">📊</div><div><div class="sec-title">Reports</div><div class="sec-sub">Your transaction history &amp; statements</div></div></div>'
+    +'<div class="two-col">'
+    +'<div style="background:#f5f5f7;border-radius:10px;padding:14px"><div style="font-size:10px;color:#999;margin-bottom:4px;font-weight:600;letter-spacing:0.4px;text-transform:uppercase">Transfers sent</div><div style="font-size:24px;font-weight:700;color:#000;letter-spacing:-0.5px">AED 2,300</div><div style="font-size:10px;color:#1a7a1a;margin-top:3px">Q2 2026 · 3 transfers</div></div>'
+    +'<div style="background:#f5f5f7;border-radius:10px;padding:14px"><div style="font-size:10px;color:#999;margin-bottom:4px;font-weight:600;letter-spacing:0.4px;text-transform:uppercase">Fees saved</div><div style="font-size:24px;font-weight:700;color:#000;letter-spacing:-0.5px">AED 118</div><div style="font-size:10px;color:#1a7a1a;margin-top:3px">vs Al Ansari exchange</div></div>'
+    +'</div>'
+    +'<div style="font-size:10px;color:#999;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">Available statements</div>'
+    +'<div style="background:#f5f5f7;border-radius:10px;overflow:hidden;margin-bottom:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(0,0,0,0.06);cursor:pointer" onclick="toast(\'Downloading April 2026 statement...\')"><div><div style="font-size:12px;font-weight:500;color:#000">April 2026 statement</div><div style="font-size:10px;color:#999;margin-top:2px">4 transactions · PDF</div></div><div style="font-size:18px">⬇️</div></div>'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(0,0,0,0.06);cursor:pointer" onclick="toast(\'Downloading March 2026 statement...\')"><div><div style="font-size:12px;font-weight:500;color:#000">March 2026 statement</div><div style="font-size:10px;color:#999;margin-top:2px">3 transactions · PDF</div></div><div style="font-size:18px">⬇️</div></div>'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer" onclick="toast(\'Downloading February 2026 statement...\')"><div><div style="font-size:12px;font-weight:500;color:#000">February 2026 statement</div><div style="font-size:10px;color:#999;margin-top:2px">2 transactions · PDF</div></div><div style="font-size:18px">⬇️</div></div>'
+    +'</div>'
+    +'<div class="btn-row"><button class="btn-outline" onclick="goWkrStep(4)">← Back</button><button class="btn-primary" onclick="toast(\'Full report exported\')">Export full report →</button></div>';
+  }
+
+  el.innerHTML = '<div class="sec-hdr" style="padding-bottom:0;border-bottom:none;margin-bottom:0"><div><div class="sec-title">Settings</div></div></div><div style="height:16px"></div>' + tabHtml + content;
+}
+
+// Init
+showStep(1);
+updatePhone();
+</script>
+</body>
+</html>
